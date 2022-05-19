@@ -4,7 +4,7 @@ const { Op } = require("sequelize");
 const jwt = require("jsonwebtoken");
 
 is_user = async (body) => {
-  const is_user = await db.Admins.findOne({
+  const is_user = await db.Users.findOne({
     where: {
       [Op.or]: [{ username: body.username }, { mail: body.username }],
     },
@@ -18,7 +18,7 @@ token_create = async (user_data) => {
     process.env.JWT_SECRET,
     { expiresIn: "60 minutes" }
   );
-  await db.Admins.update(
+  await db.Users.update(
     {
       token: token,
     },
