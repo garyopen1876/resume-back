@@ -1,4 +1,5 @@
-const user_service = require("../services/user.js")
+const user_service = require("../services/user.js");
+const form_verification = require("../services/form_verification.js");
 const bcrypt = require("bcrypt");
 
 login = async (req, res) => {
@@ -19,11 +20,16 @@ register = async (req, res) => {
   try {
     const user = await user_service.is_user(req.body);
     if (!user) {
-      await user_service.token_create(user);
-      const token = await user_service.token_create(user);
-      return res.status(201).json({ message: "註冊成功", token: token });
+      const register_user = await user_service.user_create(req.body);
+      const mail_verification = await form_verification.is_mail(req.body.mail);
+      if (register_user && mail_verification) {
+        const token = await user_service.token_create(register_user);
+        return res.status(201).json({ message: "註冊成功", token: token });
+      } else {
+        return res.status(402).json({ message: "註冊錯誤" });
+      }
     } else {
-      return res.status(401).json({ message: "已有帳號" });
+      return res.status(401).json({ message: "帳號重複" });
     }
   } catch (err) {
     return res.status(500).json({ message: err.message });
@@ -31,4 +37,5 @@ register = async (req, res) => {
 };
 module.exports = {
   login,
+  register,
 };

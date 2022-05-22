@@ -9,8 +9,11 @@ module.exports = function (router) {
   router.post("/api/register", user_controller.register);
   router.post("/api/login", user_controller.login);
 
+  router.get("/api/message");
+  router.post("/api/message");
+
   router.use(token_authentication_middleware);
 
-  router.get("/api/message", admin_controller.login);
-  router.post("/api/message", admin_controller.login);
+  router.put("/api/message");
+  router.delete("/api/message");
 };
