@@ -11,10 +11,10 @@ module.exports = function (router) {
   router.post("/api/login", user_controller.login);
 
   router.get("/api/message", message_controller.message_read);
-  router.post("/api/message");
+  router.post("/api/message", message_controller.message_create);
 
   router.use(token_authentication_middleware);
 
-  router.put("/api/message");
-  router.delete("/api/message");
+  router.put("/api/message", message_controller.message_update);
+  router.delete("/api/message", message_controller.message_delete);
 };

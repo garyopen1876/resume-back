@@ -4,6 +4,9 @@ const bcrypt = require("bcrypt");
 
 login = async (req, res) => {
   try {
+    if (req.body.username == "guest") {
+      return res.status(403).json({ message: "訪客無法登入" });
+    }
     const user = await user_service.is_user(req.body);
     if (user && bcrypt.compareSync(req.body.password, user.password)) {
       const token = await user_service.token_create(user);
