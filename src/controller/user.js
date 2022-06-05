@@ -23,9 +23,12 @@ register = async (req, res) => {
   try {
     const user = await user_service.is_user(req.body);
     if (!user) {
-      const register_user = await user_service.user_create(req.body);
       const mail_verification = await form_verification.is_mail(req.body.mail);
-      if (register_user && mail_verification) {
+      if(!mail_verification){
+        return res.status(403).json({ message: "Email格式錯誤" });
+      }
+      const register_user = await user_service.user_create(req.body);
+      if (register_user) {
         const token = await user_service.token_create(register_user);
         return res.status(201).json({ message: "註冊成功", token: token });
       } else {
