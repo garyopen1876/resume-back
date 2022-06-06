@@ -1,8 +1,21 @@
 const db = require("../models/index.js");
+const { Op } = require("sequelize");
 
 message_get_all = async () => {
   const all_message = await db.Messages.findAll({ order: [["id", "ASC"]] });
   return all_message;
+};
+
+message_search = async (keyword) => {
+  const message_search = await db.Messages.findAll({
+    where: {
+      content: {
+        [Op.like]: "%" + keyword + "%",
+      },
+    },
+    order: [["id", "ASC"]],
+  });
+  return message_search;
 };
 
 message_create = async (message_owner, message_content) => {
@@ -40,6 +53,7 @@ message_update = async (username, message_id, message_content) => {
 
 module.exports = {
   message_get_all,
+  message_search,
   message_create,
   message_delete,
   message_update,

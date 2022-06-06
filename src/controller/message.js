@@ -10,6 +10,22 @@ message_read = async (req, res) => {
   }
 };
 
+message_search = async (req, res) => {
+  try {
+    if(!req.query.keyword){
+      return res.status(403).json({ message: "請輸入搜尋內容" });
+    }
+    const search_message = await message_service.message_search(req.query.keyword);
+    if(search_message){
+      return res.status(201).json({ message: "搜尋成功", data: search_message });
+    }else{
+      return res.status(404).json({ message: "無搜尋結果" });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+};
+
 message_create = async (req, res) => {
   try {
     if (!req.body.content) {
@@ -72,6 +88,7 @@ message_update = async (req, res) => {
 
 module.exports = {
   message_read,
+  message_search,
   message_create,
   message_delete,
   message_update,
