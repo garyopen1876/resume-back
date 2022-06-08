@@ -9,6 +9,7 @@ module.exports = function (router) {
 
   router.post("/api/register", user_controller.register);
   router.post("/api/login", user_controller.login);
+  router.post("/api/googlelogin", user_controller.google_login);
 
   router.get("/api/message", message_controller.message_read);
   router.get("/api/messagesearch", message_controller.message_search);

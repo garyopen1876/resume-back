@@ -20,6 +20,7 @@ module.exports = {
       mail: {
         allowNull: false,
         type: Sequelize.STRING,
+        unique: true
       },
       token: {
         type: Sequelize.STRING,

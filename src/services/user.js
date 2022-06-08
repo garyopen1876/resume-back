@@ -13,11 +13,11 @@ is_user = async (body) => {
   return is_user;
 };
 
-user_create = async (register_data) => {
+user_create = async (username,password,mail) => {
   const register_user = await db.Users.create({
-    username: register_data.username,
-    password: bcrypt.hashSync(register_data.password, bcrypt.genSaltSync(10)),
-    mail: register_data.mail,
+    username: username,
+    password: bcrypt.hashSync(password, bcrypt.genSaltSync(10)),
+    mail: mail,
   });
   return register_user;
 };

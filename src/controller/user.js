@@ -1,6 +1,7 @@
 const user_service = require("../services/user.js");
 const form_verification = require("../services/form_verification.js");
 const bcrypt = require("bcrypt");
+const { v4: uuidv4 } = require("uuid");
 
 login = async (req, res) => {
   try {
@@ -19,15 +20,43 @@ login = async (req, res) => {
   }
 };
 
+google_login = async (req, res) => {
+  try {
+    const user = await user_service.is_user(req.body);
+    if (user) {
+      const token = await user_service.token_create(user);
+      return res.status(201).json({ message: "登入成功", token: token });
+    } else {
+      const register_user = await user_service.user_create(
+        req.body.username,
+        uuidv4(),
+        req.body.mail
+      );
+      if (register_user) {
+        const token = await user_service.token_create(register_user);
+        return res.status(201).json({ message: "註冊成功", token: token });
+      } else {
+        return res.status(402).json({ message: "註冊錯誤" });
+      }
+    }
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+};
+
 register = async (req, res) => {
   try {
     const user = await user_service.is_user(req.body);
     if (!user) {
       const mail_verification = await form_verification.is_mail(req.body.mail);
-      if(!mail_verification){
+      if (!mail_verification) {
         return res.status(403).json({ message: "Email格式錯誤" });
       }
-      const register_user = await user_service.user_create(req.body);
+      const register_user = await user_service.user_create(
+        req.body.username,
+        req.body.password,
+        req.body.mail
+      );
       if (register_user) {
         const token = await user_service.token_create(register_user);
         return res.status(201).json({ message: "註冊成功", token: token });
@@ -44,5 +73,6 @@ register = async (req, res) => {
 
 module.exports = {
   login,
+  google_login,
   register,
 };
